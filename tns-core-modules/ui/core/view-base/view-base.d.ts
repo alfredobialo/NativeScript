@@ -257,7 +257,7 @@ export abstract class ViewBase extends Observable {
 
     /**
      * Performs the core logic of adding a child view to the native visual tree. Returns true if the view's native representation has been successfully added, false otherwise.
-     */
+    */
     _addViewToNativeVisualTree(view: ViewBase, atIndex?: number): boolean;
     _removeViewFromNativeVisualTree(view: ViewBase): void;
     _childIndexToNativeChildIndex(index?: number): number;
@@ -280,7 +280,7 @@ export abstract class ViewBase extends Observable {
      * @unstable
      * Ensures a dom-node for this view.
      */
-    public ensureDomElement();
+    public ensureDomNode();
     
     //@private
     public _styleScope: any;

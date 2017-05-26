@@ -262,8 +262,10 @@ export abstract class ViewBase extends Observable implements ViewBaseDefinition 
         return this._domNode;
     }
 
-    public ensureDomElement() {
-        this._domNode = new DOMNode(this);
+    public ensureDomNode() {
+        if (!this.domNode) {
+            this._domNode = new DOMNode(this);
+        }
     }
 
     // Overriden so we don't raise `poropertyChange`
