@@ -8,7 +8,7 @@ const propertyBlacklist = [
     "effectivePaddingTop"
 ]
 
-interface Inspector {
+export interface Inspector {
     childNodeInserted(parentId: number, lastId: number, nodeStr: string);
     childNodeRemoved(parentId: number, nodeId: number);
     documentUpdated();
@@ -32,7 +32,7 @@ export class DOMNode {
     nodeName;
     localName;
     nodeValue = '';
-    attributes = [];
+    attributes: string[] = [];
 
     constructor(private view: ViewBase) {
         this.nodeType = view.typeName === "Frame" ? ROOT_NODE_TYPE : ELEMENT_NODE_TYPE;
