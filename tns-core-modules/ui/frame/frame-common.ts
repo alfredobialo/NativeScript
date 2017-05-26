@@ -17,22 +17,29 @@ function onLivesync(args: EventData): void {
     // give time to allow fileNameResolver & css to reload.
     setTimeout(() => {
         let g = <any>global;
-        // // Close the error page if available and remove the reference from global context.
-        // if (g.errorPage) {
-        //     g.errorPage.closeModal();
-        //     g.errorPage = undefined;
-        // }
+        // Close the error page if available and remove the reference from global context.
+        if (g.errorPage) {
+            g.errorPage.closeModal();
+            g.errorPage = undefined;
+        }
 
-        // try {
+        try {
             g.__onLiveSyncCore(); 
-        // } catch (ex) {
-        //     // Show the error as modal page, save reference to the page in global context.
-        //     g.errorPage = parse(`<Page><ScrollView><Label text="${ex}" textWrap="true" style="color: red;" /></ScrollView></Page>`);
-        //     g.errorPage.showModal();
-        // }
+        } catch (ex) {
+            // Show the error as modal page, save reference to the page in global context.
+            g.errorPage = parse(`<Page><ScrollView><Label text="${ex}" textWrap="true" style="color: red;" /></ScrollView></Page>`);
+            g.errorPage.showModal();
+        }
     });
 }
 application.on("livesync", onLivesync);
+
+global.__getDocument = function() {
+     var topMostFrame = topmost();
+     topMostFrame.ensureDomNode();
+
+     return topMostFrame.domNode.toJSON();
+}
 
 let frameStack: Array<FrameBase> = [];
 

@@ -12,6 +12,8 @@
 
         <Button text="add" tap="add" />
         <Button text="remove" tap="remove" col="2" />
+        
+        <Button text="move beach" tap="navigate" col="1" />
         <StackLayout colSpan="3" row="2" id="container">
             
         </StackLayout>

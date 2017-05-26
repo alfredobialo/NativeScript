@@ -28,3 +28,7 @@ export function remove(args) {
     const lbl = container.getChildAt(container.getChildrenCount() - 1);
     container.removeChild(lbl);
 }
+
+export function navigate() {
+    frame.topmost().navigate("main-page");
+}

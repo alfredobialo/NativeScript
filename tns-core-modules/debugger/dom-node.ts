@@ -9,8 +9,8 @@ const propertyBlacklist = [
 ]
 
 interface Inspector {
-    childInserted(parentId: number, lastId: number, nodeStr: string);
-    childRemoved(parentId: number, nodeId: number);
+    childNodeInserted(parentId: number, lastId: number, nodeStr: string);
+    childNodeRemoved(parentId: number, nodeId: number);
     documentUpdated();
 }
 
@@ -18,7 +18,7 @@ let inspector: Inspector;
 
 function getInspector(): Inspector {
     if (!inspector) {
-        inspector = (<any>global).__inpector;
+        inspector = (<any>global).__inspector;
     }
 
     return inspector;
@@ -90,31 +90,33 @@ export class DOMNode {
             return true;
         });
 
-        props.forEach(pair => attrs.push(pair[0], pair[1]));
+        props.forEach(pair => attrs.push(pair[0], pair[1] + ""));
     }
 
 
     onChildAdded(view: ViewBase, atIndex?: number): void {
-        console.log("onChildAdded: " + view + " at: " + atIndex)
-
         const ins = getInspector();
         if (ins) {
-            if (atIndex === undefined) {
-                //TODO: fix this
-                atIndex = 100000;
-            }
+            let previousChild: ViewBase;
+            this.view.eachChild((child) => {
+                if (child === view) {
+                    return false;
+                }
+                
+                previousChild = child;
+
+                return true;
+            });
 
             view.ensureDomNode();
-            ins.childInserted(this.nodeId, atIndex, view.domNode.toJSON());
+            ins.childNodeInserted(this.nodeId, !!previousChild ? previousChild._domId : 0, view.domNode.toJSON());
         }
     }
 
     onChildRemoved(view: ViewBase): void {
-        console.log("onChildRemoved: " + view)
-
         const ins = getInspector();
         if (ins) {
-            ins.childRemoved(this.nodeId, view.domNode.nodeId);
+            ins.childNodeRemoved(this.nodeId, view.domNode.nodeId);
         }
     }
 }
