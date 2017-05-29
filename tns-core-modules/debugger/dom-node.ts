@@ -1,5 +1,8 @@
-import { getSetProperties } from "../ui/core/properties";
+import { getSetProperties, getComputedCssValues } from "../ui/core/properties";
+import { PercentLength, Length } from "../ui/styling/style-properties";
 import { ViewBase } from "../ui/core/view";
+import { Color } from "../color";
+import { CSSComputedStyleProperty } from "./css-agent";
 
 const propertyBlacklist = [
     "effectivePaddingLeft",
@@ -102,7 +105,7 @@ export class DOMNode {
                 if (child === view) {
                     return false;
                 }
-                
+
                 previousChild = child;
 
                 return true;
@@ -118,5 +121,28 @@ export class DOMNode {
         if (ins) {
             ins.childNodeRemoved(this.nodeId, view.domNode.nodeId);
         }
+    }
+
+    getComputedProperties(): CSSComputedStyleProperty[] {
+        const result = getComputedCssValues(this.view)
+            .filter(pair => pair[0][0] !== "_")
+            .map((pair) => {
+                const name = pair[0];
+                let value = pair[1];
+
+                if (typeof value === "undefined" || value === null) {
+                    value = "";
+                } else if (value instanceof Color) {
+                    value = value.toString()
+                }
+                else if (typeof value === "object") {
+                    value = PercentLength.convertToString(value)
+                } else {
+                    value = value + "";
+                }
+
+                return { name, value }
+            });
+        return result;
     }
 }

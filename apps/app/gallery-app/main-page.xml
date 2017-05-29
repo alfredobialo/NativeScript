@@ -2,12 +2,14 @@
 <Page navigatedTo="print">
     <GridLayout rows="* * *" columns="* * *">
         
-        <Button customProp="custom" 
+        <Button id="btn"
+                customProp="custom" 
                 text="hi there" 
                 fontSize="30" 
                 row="1"
                 col="0"
-                style="color: blue" 
+                color="red"
+                backgroundColor="lightgreen"
                 class="btn" />
 
         <Button text="add" tap="add" />

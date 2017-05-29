@@ -10,9 +10,15 @@ export function itemTap(args: observable.EventData) {
     });
 }
 
-export function print() {
+export function print(args) {
     const node = new DOMNode(frame.topmost());
-    console.dir(node.print());
+    // console.dir(node.print());
+
+    console.log("-------------")
+
+    const btn = args.object.page.getViewById("btn");
+    btn.ensureDomNode();
+    console.dir(btn.domNode.getComputedProperties());
 }
 
 let i = 0;

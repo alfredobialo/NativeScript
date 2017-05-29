@@ -10,6 +10,7 @@ export { Style };
 
 export const unsetValue: any = new Object();
 
+let cssPropertyNames: string[] = [];
 let symbolPropertyMap = {};
 let cssSymbolPropertyMap = {};
 
@@ -387,6 +388,8 @@ export class CssProperty<T extends Style, U> implements definitions.CssProperty<
         const name = options.name;
         this.name = name;
 
+        cssPropertyNames.push(options.cssName);
+
         this.cssName = `css:${options.cssName}`;
         this.cssLocalName = options.cssName;
 
@@ -609,6 +612,8 @@ export class CssAnimationProperty<T extends Style, U> {
         const { valueConverter, equalityComparer, valueChanged, defaultValue } = options;
         const propertyName = options.name;
         this.name = propertyName;
+
+        cssPropertyNames.push(options.cssName);
 
         CssAnimationProperty.properties[propertyName] = this;
         if (options.cssName && options.cssName !== propertyName) {
@@ -1132,7 +1137,16 @@ export function getSetProperties(view: ViewBase): [string, any][] {
 
         const value = view[property.key];
         result.push([property.name, value]);
-    }
+    } 
 
+    return result;
+}
+
+export function getComputedCssValues(view: ViewBase): [string, any][] {
+    const result = [];
+    const style = view.style;
+    for (var prop of cssPropertyNames) {
+        result.push([prop, style[prop]]);
+    }
     return result;
 }

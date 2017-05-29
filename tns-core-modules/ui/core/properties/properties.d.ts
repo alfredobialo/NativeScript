@@ -107,7 +107,7 @@ export class CssAnimationProperty<T extends Style, U> {
 
     public register(cls: { prototype: T }): void;
     public isSet(instance: T): boolean;
-    
+
     public _valueConverter?: (value: string) => any;
     public static _getByCssName(name: string): CssAnimationProperty<any, any>;
 }
@@ -122,4 +122,5 @@ export function clearInheritedProperties(view: ViewBase): void;
 export function makeValidator<T>(...values: T[]): (value: any) => value is T;
 export function makeParser<T>(isValid: (value: any) => boolean): (value: any) => T;
 
-export function getSetProperties(view: ViewBase): [string, any][]; 
+export function getSetProperties(view: ViewBase): [string, any][];
+export function getComputedCssValues(view: ViewBase): [string, any][];
