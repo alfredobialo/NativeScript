@@ -8,7 +8,11 @@ const propertyBlacklist = [
     "effectivePaddingLeft",
     "effectivePaddingBottom",
     "effectivePaddingRight",
-    "effectivePaddingTop"
+    "effectivePaddingTop",
+    "effectiveBorderTopWidth",
+    "effectiveBorderRightWidth",
+    "effectiveBorderBottomWidth",
+    "effectiveBorderLeftWidth"
 ]
 
 export interface Inspector {
@@ -134,8 +138,7 @@ export class DOMNode {
                     value = "";
                 } else if (value instanceof Color) {
                     value = value.toString()
-                }
-                else if (typeof value === "object") {
+                } else if (typeof value === "object") {
                     value = PercentLength.convertToString(value)
                 } else {
                     value = value + "";

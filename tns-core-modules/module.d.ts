@@ -18,6 +18,7 @@ declare namespace NodeJS {
         __extends: any;
         __onLiveSync: () => void;
         __getDocument: () => string;
+        __getComputedStylesForNode: (nodeId: number) => string;
         __onUncaughtError: (error: NativeScriptError) => void;
         TNS_WEBPACK?: boolean;
         __requireOverride?: (name: string, dir: string) => any;

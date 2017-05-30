@@ -3,7 +3,7 @@ import { Frame as FrameDefinition, NavigationEntry, BackstackEntry, NavigationTr
 import { Page } from "../page";
 
 // Types.
-import { View, CustomLayoutView, isIOS, isAndroid, traceEnabled, traceWrite, traceCategories, EventData } from "../core/view";
+import { View, CustomLayoutView, isIOS, isAndroid, traceEnabled, traceWrite, traceCategories, EventData, ViewBase } from "../core/view";
 import { resolveFileName } from "../../file-system/file-name-resolver";
 import { knownFolders, path } from "../../file-system";
 import { parse, loadPage } from "../builder";
@@ -24,7 +24,7 @@ function onLivesync(args: EventData): void {
         }
 
         try {
-            g.__onLiveSyncCore(); 
+            g.__onLiveSyncCore();
         } catch (ex) {
             // Show the error as modal page, save reference to the page in global context.
             g.errorPage = parse(`<Page><ScrollView><Label text="${ex}" textWrap="true" style="color: red;" /></ScrollView></Page>`);
@@ -34,11 +34,44 @@ function onLivesync(args: EventData): void {
 }
 application.on("livesync", onLivesync);
 
-global.__getDocument = function() {
-     var topMostFrame = topmost();
-     topMostFrame.ensureDomNode();
+global.__getDocument = function () {
+    var topMostFrame = topmost();
+    topMostFrame.ensureDomNode();
 
-     return topMostFrame.domNode.toJSON();
+    return topMostFrame.domNode.toJSON();
+}
+
+global.__getComputedStylesForNode = function (nodeId) {
+    var childFound = false;
+    var childForId: ViewBase;
+
+    function findChild(view: ViewBase) {
+        if (childFound) {
+            return;
+        }
+
+        view.eachChild((child) => {
+            if (child._domId === nodeId) {
+                childFound = true;
+                childForId = child;
+
+                return false;
+            }
+
+            findChild(child);
+            return true;
+        })
+    }
+
+    var topMostFrame = topmost();
+    findChild(topMostFrame);
+    
+    if (childFound) {
+        childForId.ensureDomNode();
+        return JSON.stringify(childForId.domNode.getComputedProperties());
+    }
+
+    return "[]";
 }
 
 let frameStack: Array<FrameBase> = [];
