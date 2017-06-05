@@ -34,44 +34,46 @@ function onLivesync(args: EventData): void {
 }
 application.on("livesync", onLivesync);
 
-global.__inspector.getDocument = function () {
-    var topMostFrame = topmost();
-    topMostFrame.ensureDomNode();
+if (global && global.__inspector) {
+    global.__inspector.getDocument = function () {
+        var topMostFrame = topmost();
+        topMostFrame.ensureDomNode();
 
-    return topMostFrame.domNode.toJSON();
-}
+        return topMostFrame.domNode.toJSON();
+    }
 
-global.__inspector.getComputedStylesForNode = function (nodeId) {
-    var childFound = false;
-    var childForId: ViewBase;
+    global.__inspector.getComputedStylesForNode = function (nodeId) {
+        var childFound = false;
+        var childForId: ViewBase;
 
-    function findChild(view: ViewBase) {
-        if (childFound) {
-            return;
-        }
-
-        view.eachChild((child) => {
-            if (child._domId === nodeId) {
-                childFound = true;
-                childForId = child;
-
-                return false;
+        function findChild(view: ViewBase) {
+            if (childFound) {
+                return;
             }
 
-            findChild(child);
-            return true;
-        })
-    }
+            view.eachChild((child) => {
+                if (child._domId === nodeId) {
+                    childFound = true;
+                    childForId = child;
 
-    var topMostFrame = topmost();
-    findChild(topMostFrame);
-    
-    if (childFound) {
-        childForId.ensureDomNode();
-        return JSON.stringify(childForId.domNode.getComputedProperties());
-    }
+                    return false;
+                }
 
-    return "[]";
+                findChild(child);
+                return true;
+            })
+        }
+
+        var topMostFrame = topmost();
+        findChild(topMostFrame);
+
+        if (childFound) {
+            childForId.ensureDomNode();
+            return JSON.stringify(childForId.domNode.getComputedProperties());
+        }
+
+        return "[]";
+    }
 }
 
 let frameStack: Array<FrameBase> = [];
