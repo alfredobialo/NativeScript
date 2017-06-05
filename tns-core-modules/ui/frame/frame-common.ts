@@ -60,7 +60,12 @@ if (global && global.__inspector) {
         
         if (childForId) {
             let parent = childForId.parent;
-            parent._removeView(childForId);
+            
+            if ((<any>parent).removeChild) {
+                (<any>parent).removeChild(childForId);
+            } else {
+                parent._removeView(childForId);
+            }
         }
     }
 }
@@ -79,7 +84,7 @@ function findChild(view: ViewBase, domId: number): ViewBase {
             if (child._domId === domId) {
                 childFound = true;
                 childForId = child;
-                
+
                 return false;
             }
 
