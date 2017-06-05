@@ -34,14 +34,14 @@ function onLivesync(args: EventData): void {
 }
 application.on("livesync", onLivesync);
 
-global.__getDocument = function () {
+global.__inspector.getDocument = function () {
     var topMostFrame = topmost();
     topMostFrame.ensureDomNode();
 
     return topMostFrame.domNode.toJSON();
 }
 
-global.__getComputedStylesForNode = function (nodeId) {
+global.__inspector.getComputedStylesForNode = function (nodeId) {
     var childFound = false;
     var childForId: ViewBase;
 
