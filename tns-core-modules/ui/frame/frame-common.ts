@@ -36,44 +36,63 @@ application.on("livesync", onLivesync);
 
 if (global && global.__inspector) {
     global.__inspector.getDocument = function () {
-        var topMostFrame = topmost();
+        const topMostFrame = topmost();
         topMostFrame.ensureDomNode();
 
         return topMostFrame.domNode.toJSON();
     }
 
     global.__inspector.getComputedStylesForNode = function (nodeId) {
-        var childFound = false;
-        var childForId: ViewBase;
+        const topMostFrame = topmost();
+        const childForId = findChild(topMostFrame, nodeId);
 
-        function findChild(view: ViewBase) {
-            if (childFound) {
-                return;
-            }
-
-            view.eachChild((child) => {
-                if (child._domId === nodeId) {
-                    childFound = true;
-                    childForId = child;
-
-                    return false;
-                }
-
-                findChild(child);
-                return true;
-            })
-        }
-
-        var topMostFrame = topmost();
-        findChild(topMostFrame);
-
-        if (childFound) {
+        if (childForId) {
             childForId.ensureDomNode();
             return JSON.stringify(childForId.domNode.getComputedProperties());
         }
 
         return "[]";
     }
+
+    global.__inspector.removeNode = function (nodeId) {
+        const topMostFrame = topmost();
+        const childForId = findChild(topMostFrame, nodeId);
+        
+        if (childForId) {
+            let parent = childForId.parent;
+            parent._removeView(childForId);
+        }
+    }
+}
+
+function findChild(view: ViewBase, domId: number): ViewBase {
+    let lifoStack = new Array();
+    let childFound = false;
+    let childForId: ViewBase = null;
+
+    lifoStack.push(view);
+
+    while (lifoStack.length > 0) {
+        let currentView = lifoStack.pop();
+
+        currentView.eachChild((child) => {
+            if (child._domId === domId) {
+                childFound = true;
+                childForId = child;
+                
+                return false;
+            }
+
+            lifoStack.push(child);
+            return true;
+        });
+
+        if (childFound) {
+            break;
+        }
+    }
+
+    return childForId;
 }
 
 let frameStack: Array<FrameBase> = [];

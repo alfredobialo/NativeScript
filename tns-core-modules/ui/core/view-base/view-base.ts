@@ -582,7 +582,7 @@ export abstract class ViewBase extends Observable implements ViewBaseDefinition 
     }
 
     /**
-    * Core logic for removing a child view from this instance. Used by the framework to handle lifecycle events more centralized. Do not outside the UI Stack implementation.
+    * Core logic for removing a child view from this instance. Used by the framework to handle lifecycle events more centralized. Do not use outside the UI Stack implementation.
     */
     public _removeView(view: ViewBase) {
         if (traceEnabled()) {
