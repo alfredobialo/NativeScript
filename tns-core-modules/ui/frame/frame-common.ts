@@ -8,6 +8,8 @@ import { resolveFileName } from "../../file-system/file-name-resolver";
 import { knownFolders, path } from "../../file-system";
 import { parse, loadPage } from "../builder";
 import * as application from "../../application";
+import { unsetValue } from "../../ui/core/properties";
+
 
 export { application };
 
@@ -57,14 +59,38 @@ if (global && global.__inspector) {
     global.__inspector.removeNode = function (nodeId) {
         const topMostFrame = topmost();
         const childForId = findChild(topMostFrame, nodeId);
-        
+
         if (childForId) {
             let parent = childForId.parent;
-            
+
             if ((<any>parent).removeChild) {
                 (<any>parent).removeChild(childForId);
             } else {
                 console.log("Can't remove child from " + parent);
+            }
+        }
+    }
+
+    global.__inspector.setAttributeAsText = function (nodeId, text, name) {
+        const topMostFrame = topmost();
+        const childForId = findChild(topMostFrame, nodeId);
+
+        if (childForId) {
+            // attribute is registered for the view instance
+            let hasOriginalAttribute = !!name;
+
+            if (text) {
+                let textParts = text.split("=");
+
+                if (textParts.length == 2) {
+                    let attrName = textParts[0];
+                    let attrValue = textParts[1].replace(/['"]+/g, '');
+
+                    childForId[hasOriginalAttribute ? name : attrName] = attrValue;
+                }
+            } else {
+                // delete attribute
+                childForId[name] = unsetValue;
             }
         }
     }
