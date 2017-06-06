@@ -64,7 +64,7 @@ if (global && global.__inspector) {
             if ((<any>parent).removeChild) {
                 (<any>parent).removeChild(childForId);
             } else {
-                parent._removeView(childForId);
+                console.log("Can't remove child from " + parent);
             }
         }
     }
