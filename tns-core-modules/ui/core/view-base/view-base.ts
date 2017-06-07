@@ -268,6 +268,12 @@ export abstract class ViewBase extends Observable implements ViewBaseDefinition 
         }
     }
 
+    public updateDomNode() {
+        if (this.domNode) {
+            this._domNode = new DOMNode(this);
+        }
+    }
+
     // Overriden so we don't raise `poropertyChange`
     // The property will raise its own event.
     public set(name: string, value: any) {

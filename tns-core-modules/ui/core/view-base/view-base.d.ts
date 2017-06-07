@@ -281,7 +281,13 @@ export abstract class ViewBase extends Observable {
      * Ensures a dom-node for this view.
      */
     public ensureDomNode();
-    
+
+    /**
+     * @unstable
+     * Updates an already existing dom-node for this view.
+     */
+    public updateDomNode();
+
     //@private
     public _styleScope: any;
 

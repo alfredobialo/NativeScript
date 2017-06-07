@@ -77,7 +77,7 @@ if (global && global.__inspector) {
 
         if (childForId) {
             // attribute is registered for the view instance
-            let hasOriginalAttribute = !!name;
+            let hasOriginalAttribute = !!name.trim();
 
             if (text) {
                 let textParts = text.split("=");
@@ -86,12 +86,20 @@ if (global && global.__inspector) {
                     let attrName = textParts[0];
                     let attrValue = textParts[1].replace(/['"]+/g, '');
 
-                    childForId[hasOriginalAttribute ? name : attrName] = attrValue;
+                    // if attr name is being replaced with another
+                    if (name !== attrName && hasOriginalAttribute) {
+                        childForId[name] = unsetValue;
+                        childForId[attrName] = attrValue;
+                    } else {
+                        childForId[hasOriginalAttribute ? name : attrName] = attrValue;
+                    }
                 }
             } else {
                 // delete attribute
                 childForId[name] = unsetValue;
             }
+
+            childForId.updateDomNode();
         }
     }
 }
